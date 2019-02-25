@@ -4,6 +4,8 @@ from email.mime.multipart import MIMEMultipart
 import getpass
 import datetime
 import locale
+from email.mime.base import MIMEBase
+from email import encoders
 
 # Create variable with time (version 'pl')
 locale.setlocale(locale.LC_TIME, 'pl')
@@ -48,8 +50,17 @@ html = report_file.read()
 msg.attach(MIMEText(html, 'html'))
 
 
-# change content of e-mail to string
-contentOfEmail = msg.as_string()
+# attachment
+# filename = 'image.jpg'
+# attachment = open(filename, 'rb')
+
+# part = MIMEBase('aplication', 'octet-stream')
+# part.set_payload((attachment).read())
+# encoders.encode_base64(part)
+# part.add_header('Content-Disposition', "attachment; filename= "+filename)
+
+# msg.attach(part)
+
 
 
 # change content of e-mail to string
