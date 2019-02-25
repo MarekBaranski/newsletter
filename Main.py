@@ -21,7 +21,9 @@ email_send = 'marek.baranski@interia.pl'
 print(email_user)
 password = getpass.getpass()
 
+
 # basic settings needed to send an e-mail
+
 msg = MIMEMultipart()
 msg['From'] = email_user
 msg['To'] = email_send
@@ -48,6 +50,11 @@ msg.attach(MIMEText(html, 'html'))
 
 # change content of e-mail to string
 contentOfEmail = msg.as_string()
+
+
+# change content of e-mail to string
+contentOfEmail = msg.as_string()
+
 
 # connect with server SMPT and send e-mail
 server = smtplib.SMTP('smtp.wp.pl', 587)
