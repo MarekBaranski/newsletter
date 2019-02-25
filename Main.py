@@ -50,18 +50,18 @@ html = report_file.read()
 msg.attach(MIMEText(html, 'html'))
 
 
+def add_attachment():
+    filename = 'TemplateOfMail.html'
+    attachment = open(filename, 'rb')
+    part = MIMEBase('aplication', 'octet-stream')
+    part.set_payload((attachment).read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', "attachment; filename= " + filename)
+    msg.attach(part)
+
+
 # attachment
-# filename = 'image.jpg'
-# attachment = open(filename, 'rb')
-
-# part = MIMEBase('aplication', 'octet-stream')
-# part.set_payload((attachment).read())
-# encoders.encode_base64(part)
-# part.add_header('Content-Disposition', "attachment; filename= "+filename)
-
-# msg.attach(part)
-
-
+add_attachment()
 
 # change content of e-mail to string
 contentOfEmail = msg.as_string()
