@@ -19,12 +19,12 @@ textOfParagraph = 'W nawiązaniu do rozmowy  telefonicznej'
 
 # setting the necessary variables
 send_from = 'emilialechart@wp.pl'
-send_to = ['marek.baranski@interia.pl']
+send_to = ['marek.baranski@interia.pl', 'maro.baranski@gmail.com']
 send_cc = []
-send_bcc = []
+send_bcc = ['marek.baranski@capgemini.com']
 subject = 'test'
-filesToAttach = ['c:/Users/Marek/Desktop/6-7.pdf']
-toaddrs = [send_to]
+filesToAttach = []
+toaddrs = send_to
 
 # function needed to connect with mail (hidden password)
 print(send_from)
@@ -46,17 +46,17 @@ with open('ReadyMail.html', 'w', encoding='utf-8') as file:
 # combination all of addresses needed to send an e-mail
 def checkAddressees(send_cc, send_bcc):
     if not send_cc and send_bcc:
-        return toaddrs + [send_bcc]
+        return send_to + send_bcc
     if not send_bcc and send_cc:
-        return toaddrs + [send_cc]
+        return send_to + send_cc
     if not send_bcc and not send_cc:
-        return toaddrs
+        return send_to
     else:
-        return toaddrs + [send_cc] + [send_bcc]
+        return send_to + send_cc + send_bcc
 
 
 # The main function for sending an e-mail
-def send_mail(send_from, send_to, send_cc, send_bcc, subject, password, filesToAttach=[],
+def send_mail(send_from, subject, password, filesToAttach=[],
               toaddrs=checkAddressees(send_cc, send_bcc), server="localhost"):
     assert type(send_to) == list
     assert type(send_cc) == list
@@ -68,7 +68,7 @@ def send_mail(send_from, send_to, send_cc, send_bcc, subject, password, filesToA
     server.login(send_from, password)
 
     # a loop to send an e-mail - only one address is shown in "To:"
-    for eachMail in send_to:
+    for eachMail in toaddrs:
         msg = MIMEMultipart()
         msg['From'] = send_from
         msg['To'] = '%s\r\n' % eachMail
@@ -90,12 +90,15 @@ def send_mail(send_from, send_to, send_cc, send_bcc, subject, password, filesToA
             msg.attach(part)
 
         # sending an e-mail to every address in the send_to list
-        server.sendmail(send_from, toaddrs, msg.as_string())
+        server.sendmail(send_from, eachMail, msg.as_string())
 
     # closing the connection with the server
     server.close()
 
 
 # starting the function
-send_mail(send_from, send_to, send_cc, send_bcc, subject, password, filesToAttach, checkAddressees(send_cc, send_bcc),
+send_mail(send_from, subject, password, filesToAttach, checkAddressees(send_cc, send_bcc),
           server=smtplib.SMTP('smtp.wp.pl', 587))
+
+print('wiadomość została wysłana do:')
+print(checkAddressees(send_cc, send_bcc))
