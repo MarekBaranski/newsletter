@@ -20,10 +20,11 @@ textOfParagraph = 'W nawiązaniu do rozmowy  telefonicznej'
 # setting the necessary variables
 send_from = 'emilialechart@wp.pl'
 send_to = ['marek.baranski@interia.pl']
-send_cc = ['marek.baranski@capgemini.com']
-send_bcc = ['maro.baranski@gmail.com']
+send_cc = []
+send_bcc = []
 subject = 'test'
-filesToAttach = ['c:/Users/Marek/Desktop/6-7.pdf', 'c:/Users/Marek/Desktop/IMG_0229.JPG']
+filesToAttach = ['c:/Users/Marek/Desktop/6-7.pdf']
+toaddrs = [send_to]
 
 # function needed to connect with mail (hidden password)
 print(send_from)
@@ -42,12 +43,25 @@ with open('ReadyMail.html', 'w', encoding='utf-8') as file:
     file.write(filedata)
 
 
+# combination all of addresses needed to send an e-mail
+def checkAddressees(send_cc, send_bcc):
+    if not send_cc and send_bcc:
+        return toaddrs + [send_bcc]
+    if not send_bcc and send_cc:
+        return toaddrs + [send_cc]
+    if not send_bcc and not send_cc:
+        return toaddrs
+    else:
+        return toaddrs + [send_cc] + [send_bcc]
+
+
 # The main function for sending an e-mail
-def send_mail(send_from, send_to, send_cc, send_bcc, subject, password, files=[], server="localhost"):
+def send_mail(send_from, send_to, send_cc, send_bcc, subject, password, filesToAttach=[],
+              toaddrs=checkAddressees(send_cc, send_bcc), server="localhost"):
     assert type(send_to) == list
     assert type(send_cc) == list
     assert type(send_bcc) == list
-    assert type(files) == list
+    assert type(filesToAttach) == list
 
     # server startup and logging into e-mail
     server.starttls()
@@ -57,13 +71,10 @@ def send_mail(send_from, send_to, send_cc, send_bcc, subject, password, files=[]
     for eachMail in send_to:
         msg = MIMEMultipart()
         msg['From'] = send_from
-        msg['To'] = 'To: %s\r\n' % eachMail
-        msg['cc'] = 'cc: %s\r\n' % COMMASPACE.join(send_cc)
+        msg['To'] = '%s\r\n' % eachMail
+        msg['cc'] = '%s\r\n' % COMMASPACE.join(send_cc)
         msg['Date'] = formatdate(localtime=True)
         msg['Subject'] = subject
-
-        # combination all of addresses needed to send an e-mail
-        toaddrs = [eachMail] + [send_cc] + [send_bcc]
 
         # attaching an HTML template for sending an e-mail#
         with open("ReadyMail.html", "r", encoding='utf-8') as f:
@@ -86,4 +97,5 @@ def send_mail(send_from, send_to, send_cc, send_bcc, subject, password, files=[]
 
 
 # starting the function
-send_mail(send_from, send_to, send_cc, send_bcc, subject, password, filesToAttach, server=smtplib.SMTP('smtp.wp.pl', 587))
+send_mail(send_from, send_to, send_cc, send_bcc, subject, password, filesToAttach, checkAddressees(send_cc, send_bcc),
+          server=smtplib.SMTP('smtp.wp.pl', 587))
