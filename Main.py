@@ -21,9 +21,9 @@ textOfParagraph = 'W nawiązaniu do rozmowy  telefonicznej'
 send_from = 'emilialechart@wp.pl'
 send_to = ['marek.baranski@interia.pl', 'maro.baranski@gmail.com']
 send_cc = []
-send_bcc = ['marek.baranski@capgemini.com']
+send_bcc = []
 subject = 'test'
-filesToAttach = []
+filesToAttach = ['c:/Users/Marek/Desktop/6-7.pdf', 'c:/Users/Marek/Desktop/6-8.pdf']
 toaddrs = send_to
 
 # function needed to connect with mail (hidden password)
@@ -44,7 +44,7 @@ with open('ReadyMail.html', 'w', encoding='utf-8') as file:
 
 
 # combination all of addresses needed to send an e-mail
-def checkAddressees(send_cc, send_bcc):
+def checkAddressees():
     if not send_cc and send_bcc:
         return send_to + send_bcc
     if not send_bcc and send_cc:
@@ -56,8 +56,7 @@ def checkAddressees(send_cc, send_bcc):
 
 
 # The main function for sending an e-mail
-def send_mail(send_from, subject, password, filesToAttach=[],
-              toaddrs=checkAddressees(send_cc, send_bcc), server="localhost"):
+def send_mail(server="localhost"):
     assert type(send_to) == list
     assert type(send_cc) == list
     assert type(send_bcc) == list
@@ -97,8 +96,7 @@ def send_mail(send_from, subject, password, filesToAttach=[],
 
 
 # starting the function
-send_mail(send_from, subject, password, filesToAttach, checkAddressees(send_cc, send_bcc),
-          server=smtplib.SMTP('smtp.wp.pl', 587))
+send_mail(server=smtplib.SMTP('smtp.wp.pl', 587))
 
 print('wiadomość została wysłana do:')
-print(checkAddressees(send_cc, send_bcc))
+print(checkAddressees())
