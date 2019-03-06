@@ -23,7 +23,7 @@ send_to = ['marek.baranski@interia.pl', 'maro.baranski@gmail.com']
 send_cc = []
 send_bcc = []
 subject = 'test'
-filesToAttach = ['c:/Users/Marek/Desktop/6-7.pdf', 'c:/Users/Marek/Desktop/6-8.pdf']
+filesToAttach = []
 toaddrs = send_to
 
 # function needed to connect with mail (hidden password)
