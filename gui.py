@@ -2,27 +2,22 @@ from tkinter import *
 
 
 def addCc():
-    frame = Frame(window)
-    frame.pack()
+    Label(center, text='DW').grid(row=1, column=0)
 
-    Label(frame, text='DW').grid(row=0, column=0)
+    entry = Entry(center)
+    entry.grid(row=1, column=2)
 
-    entry = Entry(frame)
-    entry.grid(row=0, column=1)
-
-    addCcButton.config(state="disabled")
+    ccButton.config(state="disabled")
 
 
 def addBcc():
-    frame = Frame(window)
-    frame.pack()
+    lableBcc = Label(window, text='UDW')
+    lableBcc.grid(row=0, column=0)
 
-    Label(frame, text='UDW').grid(row=0, column=0)
+    entryBcc = Entry(window)
+    entryBcc.grid(row=0, column=1)
 
-    entry = Entry(frame)
-    entry.grid(row=0, column=1)
-
-    addBccButton.config(state="disabled")
+    bccButton.config(state="disabled")
 
 
 # ------------------------------------
@@ -30,12 +25,38 @@ def addBcc():
 
 window = Tk()
 window.title("Newsletter")
-window.geometry("350x300+300+300")
+window.geometry('{}x{}'.format(460, 350))
 
-addCcButton = Button(window, text='DW', command=addCc)
-addCcButton.pack()
+# create all of the main containers
+top_frame = Frame(window, width=450, height=50, pady=3)
+center = Frame(window, width=450, height=250, pady=3)
+btm_frame = Frame(window, width=450, height=45, pady=3)
 
-addBccButton = Button(window, text='UDW', command=addBcc)
-addBccButton.pack()
+# layout all of the main containers
+top_frame.grid(row=0, sticky="ew")
+center.grid(row=1)
+btm_frame.grid(row=2, sticky="ew")
+
+# create the widgets for the top frame
+sendButton = Button(top_frame, text='Send', width=10)
+ccButton = Button(top_frame, text='DW', command=addCc, width=10)
+bccButton = Button(top_frame, text='UDW',command=addBcc,  width=10)
+attachButton = Button(top_frame, text='Załącz', width=10)
+
+# layout the widgets in the top frame
+sendButton.grid(row=0, column=0)
+ccButton.grid(row=0, column=1)
+bccButton.grid(row=0, column=2)
+attachButton.grid(row=0, column=3)
+
+
+# create the center widgets
+lableTo = Label(center, text='DO:')
+entryTo = Entry(center)
+
+# layout the widgets in the top frame
+lableTo.grid(row=0, column=0)
+entryTo.grid(row=0, column=1, columnspan=4)
+
 
 window.mainloop()
