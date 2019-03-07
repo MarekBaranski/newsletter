@@ -78,8 +78,11 @@ entrySubject = Entry(center, width=65)
 lableWelcome = Label(center, text='Powitanie:', width=12)
 entryWelcome = Entry(center, width=65)
 
+sb_textbox = Scrollbar(center) #create scrollbar
 labelParagraphOne = Label(center, text='Tekst:', width=12)
-textParagraphOne = Text(center, height=5, width=52)
+textParagraphOne = Text(center, height=5, width=52, yscrollcommand=sb_textbox.set)
+sb_textbox.config(command=textParagraphOne.yview) #bind yview method to scrollbar
+
 
 # layout the widgets in the top frame
 lableTo.grid(row=0, column=0)
@@ -94,5 +97,7 @@ entryWelcome.grid(row=4, column=1, pady=30)
 
 labelParagraphOne.grid(row=5, column=0, pady=10, sticky='N')
 textParagraphOne.grid(row=5, column=1, padx=10, pady=10, sticky='W')
+sb_textbox.grid(row=5, column=2, padx=10, pady=10, sticky='W') #place for scrollbar
+sb_textbox.place(in_=textParagraphOne, relx=1, rely=0, relheight=1)#size and place scrollbar according with textbox
 
 window.mainloop()
