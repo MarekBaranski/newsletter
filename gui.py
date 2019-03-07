@@ -2,20 +2,23 @@ from tkinter import *
 
 
 def addCc():
-    Label(center, text='DW').grid(row=1, column=0)
-
-    entry = Entry(center)
-    entry.grid(row=1, column=1)
+    lableCc = Label(center, text='UW:', width=10)
+    lableCc.grid(row=1, column=0, pady=10)
+    entryCc = Entry(center, width=65)
+    entryCc.grid(row=1, column=1, pady=10)
+    clearCcButton = Button(center, text='clear', width=10)
+    clearCcButton.grid(row=1, column=2, padx=20, sticky="ew")
 
     ccButton.config(state="disabled")
 
 
 def addBcc():
-    lableBcc = Label(center, text='UDW')
-    lableBcc.grid(row=2, column=0)
-
-    entryBcc = Entry(center)
-    entryBcc.grid(row=2, column=1)
+    lableBcc = Label(center, text='UDW:', width=10)
+    lableBcc.grid(row=2, column=0, pady=10)
+    entryBcc = Entry(center, width=65)
+    entryBcc.grid(row=2, column=1, pady=10)
+    clearCcButton = Button(center, text='clear', width=10)
+    clearCcButton.grid(row=2, column=2, padx=20, sticky="ew")
 
     bccButton.config(state="disabled")
 
@@ -25,7 +28,7 @@ def addBcc():
 
 window = Tk()
 window.title("Newsletter")
-window.geometry('{}x{}'.format(460, 350))
+window.geometry('{}x{}'.format(760, 550))
 
 # create all of the main containers
 top_frame = Frame(window, width=450, height=50, pady=3)
@@ -33,8 +36,11 @@ center = Frame(window, width=450, height=40, pady=3)
 btm_frame = Frame(window, width=450, height=45, pady=3)
 
 # layout all of the main containers
+#window.grid_rowconfigure(0, weight=1)
+#window.grid_columnconfigure(0, weight=1)
+
 top_frame.grid(row=0, sticky="ew")
-center.grid(row=1, sticky="ew")
+center.grid(row=1, pady=25)
 btm_frame.grid(row=2, sticky="ew")
 
 # create the widgets for the top frame
@@ -51,21 +57,13 @@ attachButton.grid(row=0, column=3)
 
 
 # create the center widgets
-ctr_left = Frame(center, width=100, height=190)
-ctr_mid = Frame(center, width=250, height=190, padx=3, pady=3)
-ctr_right = Frame(center, width=100, height=190, padx=3, pady=3)
-
-ctr_left.grid(row=0, column=0, sticky="ns")
-ctr_mid.grid(row=0, column=1, sticky="ns")
-ctr_right.grid(row=0, column=2, sticky="ns")
-
-lableTo = Label(ctr_left, text='DO:')
-entryTo = Entry(ctr_mid)
-clearToButton = Button(ctr_right, text='clear', width=10)
+lableTo = Label(center, text='DO:', width=10)
+entryTo = Entry(center, width=65)
+clearToButton = Button(center, text='clear', width=10)
 
 # layout the widgets in the top frame
-lableTo.grid(row=0, column=0, columnspan=2)
-entryTo.grid(row=0, column=0, columnspan=5, rowspan=2)
-clearToButton.grid(row=0, column=0, columnspan=5)
+lableTo.grid(row=0, column=0, sticky="ns")
+entryTo.grid(row=0, column=1, padx=5, sticky="ns")
+clearToButton.grid(row=0, column=2, padx=20, sticky="ew")
 
 window.mainloop()
