@@ -10,7 +10,7 @@ def addCc():
     entryCc = Entry(center, width=65)
     entryCc.grid(row=1, column=1, pady=10, sticky='ns')
     clearCcButton = Button(center, text='clear', width=10, command=clearEntryCc)
-    clearCcButton.grid(row=1, column=2, padx=20)
+    clearCcButton.grid(row=1, column=2, padx=5)
     ccButton.config(state="disabled")
 
 
@@ -24,7 +24,7 @@ def addBcc():
     entryBcc = Entry(center, width=65)
     entryBcc.grid(row=2, column=1, pady=10, sticky='ns')
     clearBccButton = Button(center, text='clear', width=10, command=clearEntryBcc)
-    clearBccButton.grid(row=2, column=2, padx=20)
+    clearBccButton.grid(row=2, column=2, padx=5)
     bccButton.config(state="disabled")
 
     def clearEntryBcc():
@@ -43,7 +43,7 @@ window.geometry('{}x{}'.format(760, 550))
 
 # create all of the main containers
 top_frame = Frame(window, width=450, height=50, pady=3)
-center = Frame(window, width=450, height=40, pady=3)
+center = Frame(window, width=450, height=50, pady=3)
 btm_frame = Frame(window, width=450, height=45, pady=3)
 
 # layout all of the main containers
@@ -68,19 +68,31 @@ attachButton.grid(row=0, column=3)
 
 
 # create the center widgets
-lableTo = Label(center, text='DO:', width=10)
+lableTo = Label(center, text='DO:', width=12)
 entryTo = Entry(center, width=65)
 clearToButton = Button(center, text='clear', width=10, command=clearEntryTo)
 
-lableSubject = Label(center, text='Temat:', width=10)
+lableSubject = Label(center, text='Temat:', width=12)
 entrySubject = Entry(center, width=65)
+
+lableWelcome = Label(center, text='Powitanie:', width=12)
+entryWelcome = Entry(center, width=65)
+
+labelParagraphOne = Label(center, text='Tekst:', width=12)
+textParagraphOne = Text(center, height=5, width=52)
 
 # layout the widgets in the top frame
 lableTo.grid(row=0, column=0)
-entryTo.grid(row=0, column=1, padx=5)
-clearToButton.grid(row=0, column=2, padx=20)
+entryTo.grid(row=0, column=1)
+clearToButton.grid(row=0, column=2, padx=5)
 
 lableSubject.grid(row=3, column=0, pady=10)
 entrySubject.grid(row=3, column=1, pady=10, padx=5)
+
+lableWelcome.grid(row=4, column=0, pady=30)
+entryWelcome.grid(row=4, column=1, pady=30)
+
+labelParagraphOne.grid(row=5, column=0, pady=10, sticky='N')
+textParagraphOne.grid(row=5, column=1, padx=10, pady=10, sticky='W')
 
 window.mainloop()
