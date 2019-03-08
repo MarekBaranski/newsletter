@@ -8,6 +8,7 @@ import locale
 from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import COMMASPACE, formatdate
+from tkinter import messagebox
 
 
 class BackendForApp:
@@ -23,7 +24,7 @@ class BackendForApp:
 
         # setting the necessary variables
         self.send_from = 'emilialechart@wp.pl'
-        self.send_to = ['marek.baranski@interia.pl', 'maro.baranski@gmail.com']
+        self.send_to = []
         self.send_cc = []
         self.send_bcc = []
         self.subject = 'test'
@@ -33,6 +34,7 @@ class BackendForApp:
         # function needed to connect with mail (hidden password)
         self.server = smtplib.SMTP('smtp.wp.pl', 587)
         #print(self.send_from)
+        self.password = 'biedronka1986'
         #self.password = getpass.getpass()
 
     def replaceHtml(self):
@@ -100,6 +102,8 @@ class BackendForApp:
 
         # closing the connection with the server
         self.server.close()
+
+        messagebox.showinfo("Status wiadomości", "Wiadmość została wysłana :)")
 
 
 # starting the function

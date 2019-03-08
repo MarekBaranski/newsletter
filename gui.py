@@ -4,10 +4,10 @@ from Main import BackendForApp
 import webbrowser
 
 
-
 class GuiForApp(BackendForApp):
     def __init__(self, master):
         super().__init__()
+
 
         def addCc():
             def clearEntryCc():
@@ -40,6 +40,15 @@ class GuiForApp(BackendForApp):
             self.replaceHtml()
             webbrowser.open_new_tab('ReadyMail.html')
 
+        def getAttachs():
+            pass
+
+        #def send():
+            self.send_to.append(self.entryTo.get())
+            #print(self.send_to)
+            self.send_mail(self.send_to)
+
+
         # ------------------------------------
 
         self.master = master
@@ -60,7 +69,7 @@ class GuiForApp(BackendForApp):
         self.btm_frame.grid(row=2, sticky='SE')
 
         # create the widgets for the top frame
-        self.sendButton = Button(self.top_frame, text='Send', width=10)
+        self.sendButton = Button(self.top_frame, text='Send', width=10, command=self.send_mail)
         self.ccButton = Button(self.top_frame, text='DW', command=addCc, width=10)
         self.bccButton = Button(self.top_frame, text='UDW', command=addBcc, width=10)
         self.attachButton = Button(self.top_frame, text='Załącz', width=10)
@@ -82,6 +91,7 @@ class GuiForApp(BackendForApp):
 
         self.lableSubject = Label(self.center, text='Temat:', width=12)
         self.entrySubject = Entry(self.center, width=65)
+        self.entrySubject.insert(0, "Portfolio")
 
         self.lableWelcome = Label(self.center, text='Powitanie:', width=12)
         self.entryWelcome = Entry(self.center, width=65)
