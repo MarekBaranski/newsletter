@@ -9,94 +9,102 @@ from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import COMMASPACE, formatdate
 
-# Create variable with time (version 'pl')
-locale.setlocale(locale.LC_TIME, 'pl')
-time = datetime.datetime.now().strftime("%d %B %Y")
 
-# Variables needed for changes in TemplateOfMail
-welcome = "Dzień dobry Pani Marto,"
-textOfParagraph = 'W nawiązaniu do rozmowy  telefonicznej'
+class BackendForApp:
 
-# setting the necessary variables
-send_from = 'emilialechart@wp.pl'
-send_to = ['marek.baranski@interia.pl', 'maro.baranski@gmail.com']
-send_cc = []
-send_bcc = []
-subject = 'test'
-filesToAttach = []
-toaddrs = send_to
+    def __init__(self):
+        # Create variable with time (version 'pl')
+        locale.setlocale(locale.LC_TIME, 'pl')
+        self.time = datetime.datetime.now().strftime("%d %B %Y")
 
-# function needed to connect with mail (hidden password)
-print(send_from)
-password = getpass.getpass()
+        # Variables needed for changes in TemplateOfMail
+        self.welcome = "Dzień dobry Pani Marto,"
+        self.textOfParagraph = 'W nawiązaniu do rozmowy  telefonicznej'
 
-# Replace the target string
-with open('TemplateOfMail.html', 'r', encoding='utf-8') as file:
-    filedata = file.read()
+        # setting the necessary variables
+        self.send_from = 'emilialechart@wp.pl'
+        self.send_to = ['marek.baranski@interia.pl', 'maro.baranski@gmail.com']
+        self.send_cc = []
+        self.send_bcc = []
+        self.subject = 'test'
+        self.filesToAttach = []
+        self.toaddrs = self.send_to
 
-filedata = filedata.replace('time', time)
-filedata = filedata.replace('textOfParagraph', textOfParagraph)
-filedata = filedata.replace('welcome', welcome)
+        # function needed to connect with mail (hidden password)
+        self.server = smtplib.SMTP('smtp.wp.pl', 587)
+        print(self.send_from)
+        self.password = getpass.getpass()
 
-# Write the file out again
-with open('ReadyMail.html', 'w', encoding='utf-8') as file:
-    file.write(filedata)
+    def replaceHtml(self):
+        # Replace the target string
+        with open('TemplateOfMail.html', 'r', encoding='utf-8') as file:
+            filedata = file.read()
 
+        filedata = filedata.replace('time', self.time)
+        filedata = filedata.replace('textOfParagraph', self.textOfParagraph)
+        filedata = filedata.replace('welcome', self.welcome)
 
-# combination all of addresses needed to send an e-mail
-def checkAddressees():
-    if not send_cc and send_bcc:
-        return send_to + send_bcc
-    if not send_bcc and send_cc:
-        return send_to + send_cc
-    if not send_bcc and not send_cc:
-        return send_to
-    else:
-        return send_to + send_cc + send_bcc
+        # Write the file out again
+        with open('ReadyMail.html', 'w', encoding='utf-8') as file:
+            file.write(filedata)
 
+    # combination all of addresses needed to send an e-mail
+    def checkAddressees(self):
+        if not self.send_cc and self.send_bcc:
+            return self.send_to + self.send_bcc
+        if not self.send_bcc and self.send_cc:
+            return self.send_to + self.send_cc
+        if not self.send_bcc and not self.send_cc:
+            return self.send_to
+        else:
+            return self.send_to + self.send_cc + self.send_bcc
 
-# The main function for sending an e-mail
-def send_mail(server="localhost"):
-    assert type(send_to) == list
-    assert type(send_cc) == list
-    assert type(send_bcc) == list
-    assert type(filesToAttach) == list
+    # The main function for sending an e-mail
+    def send_mail(self):
+        assert type(self.send_to) == list
+        assert type(self.send_cc) == list
+        assert type(self.send_bcc) == list
+        assert type(self.filesToAttach) == list
 
-    # server startup and logging into e-mail
-    server.starttls()
-    server.login(send_from, password)
+        # Replace proper field in HTML
+        self.replaceHtml()
 
-    # a loop to send an e-mail - only one address is shown in "To:"
-    for eachMail in toaddrs:
-        msg = MIMEMultipart()
-        msg['From'] = send_from
-        msg['To'] = '%s\r\n' % eachMail
-        msg['cc'] = '%s\r\n' % COMMASPACE.join(send_cc)
-        msg['Date'] = formatdate(localtime=True)
-        msg['Subject'] = subject
+        # server startup and logging into e-mail
+        self.server.starttls()
+        self.server.login(self.send_from, self.password)
 
-        # attaching an HTML template for sending an e-mail#
-        with open("ReadyMail.html", "r", encoding='utf-8') as f:
-            html = f.read()
-        msg.attach(MIMEText(html, 'html'))
+        # a loop to send an e-mail - only one address is shown in "To:"
+        for eachMail in self.toaddrs:
+            msg = MIMEMultipart()
+            msg['From'] = self.send_from
+            msg['To'] = '%s\r\n' % eachMail
+            msg['cc'] = '%s\r\n' % COMMASPACE.join(self.send_cc)
+            msg['Date'] = formatdate(localtime=True)
+            msg['Subject'] = self.subject
 
-        # attaching all of attachment from list filesToAttach
-        for f in filesToAttach:
-            part = MIMEBase('application', "octet-stream")
-            part.set_payload(open(f, "rb").read())
-            encoders.encode_base64(part)
-            part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(f))
-            msg.attach(part)
+            # attaching an HTML template for sending an e-mail#
+            with open("ReadyMail.html", "r", encoding='utf-8') as f:
+                html = f.read()
+            msg.attach(MIMEText(html, 'html'))
 
-        # sending an e-mail to every address in the send_to list
-        server.sendmail(send_from, eachMail, msg.as_string())
+            # attaching all of attachment from list filesToAttach
+            for f in self.filesToAttach:
+                part = MIMEBase('application', "octet-stream")
+                part.set_payload(open(f, "rb").read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(f))
+                msg.attach(part)
 
-    # closing the connection with the server
-    server.close()
+            # sending an e-mail to every address in the send_to list
+            self.server.sendmail(self.send_from, eachMail, msg.as_string())
+
+        # closing the connection with the server
+        self.server.close()
 
 
 # starting the function
-send_mail(server=smtplib.SMTP('smtp.wp.pl', 587))
+test_of_backend = BackendForApp()
+test_of_backend.send_mail()
 
 print('wiadomość została wysłana do:')
-print(checkAddressees())
+print(test_of_backend.checkAddressees())
