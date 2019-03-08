@@ -32,8 +32,8 @@ class BackendForApp:
 
         # function needed to connect with mail (hidden password)
         self.server = smtplib.SMTP('smtp.wp.pl', 587)
-        print(self.send_from)
-        self.password = getpass.getpass()
+        #print(self.send_from)
+        #self.password = getpass.getpass()
 
     def replaceHtml(self):
         # Replace the target string
@@ -103,8 +103,8 @@ class BackendForApp:
 
 
 # starting the function
-test_of_backend = BackendForApp()
-test_of_backend.send_mail()
+#test_of_backend = BackendForApp()
+#test_of_backend.send_mail()
 
-print('wiadomość została wysłana do:')
-print(test_of_backend.checkAddressees())
+#print('wiadomość została wysłana do:')
+#print(test_of_backend.checkAddressees())

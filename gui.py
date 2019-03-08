@@ -1,10 +1,13 @@
 from tkinter import *
 from tkinter import ttk
+from Main import BackendForApp
+import webbrowser
 
 
-class GuiForApp:
+
+class GuiForApp(BackendForApp):
     def __init__(self, master):
-        print('start')
+        super().__init__()
 
         def addCc():
             def clearEntryCc():
@@ -33,6 +36,10 @@ class GuiForApp:
         def clearEntryTo():
             self.entryTo.delete(0, END)
 
+        def showPreview():
+            self.replaceHtml()
+            webbrowser.open_new_tab('ReadyMail.html')
+
         # ------------------------------------
 
         self.master = master
@@ -57,12 +64,16 @@ class GuiForApp:
         self.ccButton = Button(self.top_frame, text='DW', command=addCc, width=10)
         self.bccButton = Button(self.top_frame, text='UDW', command=addBcc, width=10)
         self.attachButton = Button(self.top_frame, text='Załącz', width=10)
+        self.lableEmpty = Label(self.top_frame, width=37)
+        self.previewButton = Button(self.top_frame, text='podgląd', command=showPreview, width=10)
 
         # layout the widgets in the top frame
         self.sendButton.grid(row=0, column=0)
         self.ccButton.grid(row=0, column=1)
         self.bccButton.grid(row=0, column=2)
         self.attachButton.grid(row=0, column=3)
+        self.lableEmpty.grid(row=0, column=4)
+        self.previewButton.grid(row=0, column=5)
 
         # create the center widgets
         self.lableTo = Label(self.center, text='DO:', width=12)
@@ -104,13 +115,10 @@ class GuiForApp:
         self.separator.grid(row=7, columnspan=5, pady=20, padx=10, sticky='NWSE')
 
         # create the btm frame widgets
-        self.previewButton = Button(self.btm_frame, text='podgląd', width=10)
+        self.closeButton = Button(self.btm_frame, text='zamknij', command=window.quit, width=10)
 
         # layout the widgets in the btm frame
-        self.previewButton.grid(row=0, column=2)
-
-    def __del__(self):
-        print('stop')
+        self.closeButton.grid(row=0, column=2)
 
 
 window = Tk()
