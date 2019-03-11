@@ -13,7 +13,7 @@ from tkinter import messagebox
 
 class BackendForApp:
 
-    def __init__(self):
+    def __init__(self, password, send_to):
         # Create variable with time (version 'pl')
         locale.setlocale(locale.LC_TIME, 'pl')
         self.time = datetime.datetime.now().strftime("%d %B %Y")
@@ -24,7 +24,7 @@ class BackendForApp:
 
         # setting the necessary variables
         self.send_from = 'emilialechart@wp.pl'
-        self.send_to = []
+        self.send_to = send_to
         self.send_cc = []
         self.send_bcc = []
         self.subject = 'test'
@@ -34,7 +34,7 @@ class BackendForApp:
         # function needed to connect with mail (hidden password)
         self.server = smtplib.SMTP('smtp.wp.pl', 587)
         #print(self.send_from)
-        self.password = 'biedronka1986'
+        self.password = password
         #self.password = getpass.getpass()
 
     def replaceHtml(self):
@@ -63,7 +63,7 @@ class BackendForApp:
 
     # The main function for sending an e-mail
     def send_mail(self):
-        assert type(self.send_to) == list
+        #assert type(self.send_to) == list
         assert type(self.send_cc) == list
         assert type(self.send_bcc) == list
         assert type(self.filesToAttach) == list
@@ -106,6 +106,8 @@ class BackendForApp:
         messagebox.showinfo("Status wiadomości", "Wiadmość została wysłana :)")
 
 
+#testObjedt = BackendForApp()
+#testObjedt.send_mail()
 # starting the function
 #test_of_backend = BackendForApp()
 #test_of_backend.send_mail()

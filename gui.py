@@ -1,12 +1,18 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, simpledialog
 from Main import BackendForApp
 import webbrowser
+import getpass
 
 
 class GuiForApp(BackendForApp):
-    def __init__(self, master):
-        super().__init__()
+    def __init__(self, master, password, send_to):
+        super().__init__(password, send_to)
+        self.password = password
+        self.send_to = send_to
+
+
+
 
 
         def addCc():
@@ -43,10 +49,12 @@ class GuiForApp(BackendForApp):
         def getAttachs():
             pass
 
-        #def send():
-            self.send_to.append(self.entryTo.get())
-            #print(self.send_to)
-            self.send_mail(self.send_to)
+        def send():
+            #self.send_to = Entry.get(self.entryTo)
+            self.send_to = self.send_to.append(self.entryTo.get())
+            print(send_to)
+            self.password = simpledialog.askstring("Password", "Enter password:", show='*')
+            self.send_mail()
 
 
         # ------------------------------------
@@ -69,7 +77,7 @@ class GuiForApp(BackendForApp):
         self.btm_frame.grid(row=2, sticky='SE')
 
         # create the widgets for the top frame
-        self.sendButton = Button(self.top_frame, text='Send', width=10, command=self.send_mail)
+        self.sendButton = Button(self.top_frame, text='Send', width=10, command=send)
         self.ccButton = Button(self.top_frame, text='DW', command=addCc, width=10)
         self.bccButton = Button(self.top_frame, text='UDW', command=addBcc, width=10)
         self.attachButton = Button(self.top_frame, text='Załącz', width=10)
@@ -132,5 +140,5 @@ class GuiForApp(BackendForApp):
 
 
 window = Tk()
-my_gui = GuiForApp(window)
+my_gui = GuiForApp(window, password='w', send_to=[])
 window.mainloop()
