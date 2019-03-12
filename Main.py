@@ -13,7 +13,7 @@ from tkinter import messagebox
 
 class BackendForApp:
 
-    def __init__(self, password, send_to, send_cc, send_bcc):
+    def __init__(self, password, send_to, send_cc, send_bcc, toaddrs):
         # Create variable with time (version 'pl')
         locale.setlocale(locale.LC_TIME, 'pl')
         self.time = datetime.datetime.now().strftime("%d %B %Y")
@@ -29,7 +29,7 @@ class BackendForApp:
         self.send_bcc = send_bcc
         self.subject = 'test'
         self.filesToAttach = []
-        self.toaddrs = []
+        self.toaddrs = toaddrs
 
 
         # function needed to connect with mail (hidden password)
@@ -51,22 +51,8 @@ class BackendForApp:
         with open('ReadyMail.html', 'w', encoding='utf-8') as file:
             file.write(filedata)
 
-    # combination all of addresses needed to send an e-mail
-    def checkAddressees(self):
-        if not self.send_cc and self.send_bcc:
-            return self.send_to + self.send_bcc
-        if not self.send_bcc and self.send_cc:
-            return self.send_to + self.send_cc
-        if not self.send_bcc and not self.send_cc:
-            return self.send_to
-        else:
-            return self.send_to + self.send_cc + self.send_bcc
-
     # The main function for sending an e-mail
     def send_mail(self):
-
-        self.toaddrs = self.checkAddressees()
-
         # Replace proper field in HTML
         self.replaceHtml()
 
@@ -83,6 +69,8 @@ class BackendForApp:
             msg['Date'] = formatdate(localtime=True)
             msg['Subject'] = self.subject
 
+            send_list = [eachMail] + self.send_cc + self.send_bcc
+
             # attaching an HTML template for sending an e-mail#
             with open("ReadyMail.html", "r", encoding='utf-8') as f:
                 html = f.read()
@@ -97,7 +85,7 @@ class BackendForApp:
                 msg.attach(part)
 
             # sending an e-mail to every address in the send_to list
-            self.server.sendmail(self.send_from, eachMail, msg.as_string())
+            self.server.sendmail(self.send_from, send_list, msg.as_string())
 
         # closing the connection with the server
         self.server.close()
