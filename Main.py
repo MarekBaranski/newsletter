@@ -13,7 +13,7 @@ from tkinter import messagebox
 
 class BackendForApp:
 
-    def __init__(self, password, send_to):
+    def __init__(self, password, send_to, send_cc, send_bcc):
         # Create variable with time (version 'pl')
         locale.setlocale(locale.LC_TIME, 'pl')
         self.time = datetime.datetime.now().strftime("%d %B %Y")
@@ -25,11 +25,12 @@ class BackendForApp:
         # setting the necessary variables
         self.send_from = 'emilialechart@wp.pl'
         self.send_to = send_to
-        self.send_cc = []
-        self.send_bcc = []
+        self.send_cc = send_cc
+        self.send_bcc = send_bcc
         self.subject = 'test'
         self.filesToAttach = []
-        self.toaddrs = self.send_to
+        self.toaddrs = []
+
 
         # function needed to connect with mail (hidden password)
         self.server = smtplib.SMTP('smtp.wp.pl', 587)
@@ -63,10 +64,8 @@ class BackendForApp:
 
     # The main function for sending an e-mail
     def send_mail(self):
-        #assert type(self.send_to) == list
-        assert type(self.send_cc) == list
-        assert type(self.send_bcc) == list
-        assert type(self.filesToAttach) == list
+
+        self.toaddrs = self.checkAddressees()
 
         # Replace proper field in HTML
         self.replaceHtml()

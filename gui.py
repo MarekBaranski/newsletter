@@ -6,14 +6,12 @@ import getpass
 
 
 class GuiForApp(BackendForApp):
-    def __init__(self, master, password, send_to):
-        super().__init__(password, send_to)
+    def __init__(self, master, password, send_to, send_cc, send_bcc):
+        super().__init__(password, send_to, send_cc, send_bcc)
         self.password = password
         self.send_to = send_to
-
-
-
-
+        self.send_cc = send_cc
+        self.send_bcc = send_bcc
 
         def addCc():
             def clearEntryCc():
@@ -50,12 +48,31 @@ class GuiForApp(BackendForApp):
             pass
 
         def send():
-            #self.send_to = Entry.get(self.entryTo)
-            self.send_to = self.send_to.append(self.entryTo.get())
-            print(send_to)
-            self.password = simpledialog.askstring("Password", "Enter password:", show='*')
-            self.send_mail()
+            # get send_To
+            newList = []
+            newList.append(self.entryTo.get())
 
+            for item in newList:
+                self.send_to.extend(item.split(","))
+
+
+            # get send_Cc
+            state = str(self.ccButton['state'])
+            if state == 'normal':
+                self.send_cc = ''
+            else:
+                newListForCc = []
+                newListForCc.append(self.entryCc.get())
+
+                for item in newListForCc:
+                    self.send_cc.extend(item.split(","))
+
+            # get password
+            self.password = simpledialog.askstring("Password", "Enter password:", show='*')
+
+            # send mail
+            #self.checkAddressees()
+            self.send_mail()
 
         # ------------------------------------
 
@@ -78,7 +95,7 @@ class GuiForApp(BackendForApp):
 
         # create the widgets for the top frame
         self.sendButton = Button(self.top_frame, text='Send', width=10, command=send)
-        self.ccButton = Button(self.top_frame, text='DW', command=addCc, width=10)
+        self.ccButton = Button(self.top_frame, text='DW', command=addCc, width=10, state='normal')
         self.bccButton = Button(self.top_frame, text='UDW', command=addBcc, width=10)
         self.attachButton = Button(self.top_frame, text='Załącz', width=10)
         self.lableEmpty = Label(self.top_frame, width=37)
@@ -140,5 +157,5 @@ class GuiForApp(BackendForApp):
 
 
 window = Tk()
-my_gui = GuiForApp(window, password='w', send_to=[])
+my_gui = GuiForApp(window, password=None, send_to=[], send_cc=[], send_bcc=[])
 window.mainloop()
