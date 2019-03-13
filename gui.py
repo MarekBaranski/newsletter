@@ -58,9 +58,19 @@ class GuiForApp(BackendForApp):
             webbrowser.open_new_tab('ReadyMail.html')
 
         def getAttachs():
-            newList = filedialog.askopenfilenames(parent=master, title='Choose a file')
+            newList = filedialog.askopenfilenames(parent=master, title='Dodaj załączniki: ')
             self.filesToAttach = list(newList)
-            
+
+            newwin = Toplevel(master)
+            newwin.geometry('{}x{}'.format(300, 150))
+            display = Text(newwin)
+            for item in self.filesToAttach:
+                os.path.split(item)
+                fileName = os.path.split(item)[1]
+                display.insert(END, fileName+'\n')
+            display.configure(state=DISABLED)
+            newwin.title("Wybrane załączniki")
+            display.pack()
 
             return self.filesToAttach
 
