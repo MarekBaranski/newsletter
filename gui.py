@@ -6,13 +6,16 @@ import os
 
 
 class GuiForApp(BackendForApp):
-    def __init__(self, master, password, send_to, send_cc, send_bcc, toaddrs):
-        super().__init__(password, send_to, send_cc, send_bcc, toaddrs)
+    def __init__(self, master, password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph):
+        super().__init__(password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph)
         self.password = password
         self.send_to = send_to
         self.send_cc = send_cc
         self.send_bcc = send_bcc
         self.toaddrs = toaddrs
+        self.subject = subject
+        self.welcome = welcome
+        self.textOfParagraph = textOfParagraph
 
         def addCc():
             def clearEntryCc():
@@ -42,6 +45,12 @@ class GuiForApp(BackendForApp):
             self.entryTo.delete(0, END)
 
         def showPreview():
+            # get welcome
+            self.welcome = self.entryWelcome.get()
+
+            # get textOfParagraph
+            self.textOfParagraph = self.entryTextParagraphOne.get('1.0', 'end')
+
             self.replaceHtml()
             webbrowser.open_new_tab('ReadyMail.html')
 
@@ -55,7 +64,6 @@ class GuiForApp(BackendForApp):
             python = sys.executable
             os.execl(python, python, *sys.argv)
 
-
         def send():
             # get send_To
             newList = []
@@ -63,7 +71,6 @@ class GuiForApp(BackendForApp):
 
             for item in newList:
                 self.send_to.extend(item.split(","))
-
 
             # get send_Cc
             state = str(self.ccButton['state'])
@@ -76,7 +83,7 @@ class GuiForApp(BackendForApp):
                 for item in newListForCc:
                     self.send_cc.extend(item.split(","))
 
-            # get send_Bcc
+                # get send_Bcc
                 state = str(self.bccButton['state'])
                 if state == 'normal':
                     self.send_bcc = []
@@ -87,11 +94,20 @@ class GuiForApp(BackendForApp):
                     for item in newListForBcc:
                         self.send_bcc.extend(item.split(","))
 
+            # get subject
+            self.subject = self.entrySubject.get()
+
+            # get welcome
+            self.welcome = self.entryWelcome.get()
+
+            # get textOfParagraph
+            self.textOfParagraph = self.entryTextParagraphOne.get('1.0', 'end')
+
             # get password
-            self.password = simpledialog.askstring("Password", "Enter password:", show='*')
+            self.password = simpledialog.askstring(self.send_from, "Hasło:", show='*')
 
             # send mail
-            #self.checkAddressees()
+            # self.checkAddressees()
             self.toaddrs = self.send_to
             self.send_mail()
 
@@ -141,11 +157,13 @@ class GuiForApp(BackendForApp):
 
         self.lableWelcome = Label(self.center, text='Powitanie:', width=12)
         self.entryWelcome = Entry(self.center, width=65)
+        self.entryWelcome.insert(0, "Dzień dobry Pani Marto,")
 
         self.sb_textbox = Scrollbar(self.center)  # create scrollbar
         self.labelParagraphOne = Label(self.center, text='Tekst:', width=12)
-        self.textParagraphOne = Text(self.center, height=5, width=52, yscrollcommand=self.sb_textbox.set)
-        self.sb_textbox.config(command=self.textParagraphOne.yview)  # bind yview method to scrollbar
+        self.entryTextParagraphOne = Text(self.center, height=5, width=52, yscrollcommand=self.sb_textbox.set)
+        self.sb_textbox.config(command=self.entryTextParagraphOne.yview)  # bind yview method to scrollbar
+        self.entryTextParagraphOne.insert(END, 'W nawiązaniu do rozmowy telefonicznej,\n')
 
         self.separatorTop = ttk.Separator(self.center, orient=HORIZONTAL)
         self.separator = ttk.Separator(self.center, orient=HORIZONTAL)
@@ -162,9 +180,9 @@ class GuiForApp(BackendForApp):
         self.entryWelcome.grid(row=5, column=1, pady=30)
 
         self.labelParagraphOne.grid(row=6, column=0, pady=10, sticky='N')
-        self.textParagraphOne.grid(row=6, column=1, padx=10, pady=10, sticky='W')
+        self.entryTextParagraphOne.grid(row=6, column=1, padx=10, pady=10, sticky='W')
         self.sb_textbox.grid(row=6, column=2, padx=10, pady=10, sticky='W')  # place for scrollbar
-        self.sb_textbox.place(in_=self.textParagraphOne, relx=1, rely=0,
+        self.sb_textbox.place(in_=self.entryTextParagraphOne, relx=1, rely=0,
                               relheight=1)  # size and place scrollbar according with textbox
 
         self.separatorTop.grid(row=0, columnspan=5, pady=20, padx=10, sticky='NWSE')
@@ -178,5 +196,6 @@ class GuiForApp(BackendForApp):
 
 
 window = Tk()
-my_gui = GuiForApp(window, password=None, send_to=[], send_cc=[], send_bcc=[], toaddrs=[])
+my_gui = GuiForApp(window, password=None, send_to=[], send_cc=[], send_bcc=[], toaddrs=[], subject=None, welcome=None,
+                   textOfParagraph=None)
 window.mainloop()

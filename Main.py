@@ -13,30 +13,28 @@ from tkinter import messagebox
 
 class BackendForApp:
 
-    def __init__(self, password, send_to, send_cc, send_bcc, toaddrs):
+    def __init__(self, password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph):
         # Create variable with time (version 'pl')
         locale.setlocale(locale.LC_TIME, 'pl')
         self.time = datetime.datetime.now().strftime("%d %B %Y")
 
         # Variables needed for changes in TemplateOfMail
-        self.welcome = "Dzień dobry Pani Marto,"
-        self.textOfParagraph = 'W nawiązaniu do rozmowy  telefonicznej'
+        self.welcome = welcome
+        self.textOfParagraph = textOfParagraph
 
         # setting the necessary variables
         self.send_from = 'emilialechart@wp.pl'
         self.send_to = send_to
         self.send_cc = send_cc
         self.send_bcc = send_bcc
-        self.subject = 'test'
+        self.subject = subject
         self.filesToAttach = []
         self.toaddrs = toaddrs
-
-
-        # function needed to connect with mail (hidden password)
-        self.server = smtplib.SMTP('smtp.wp.pl', 587)
-        #print(self.send_from)
         self.password = password
-        #self.password = getpass.getpass()
+        self.server = smtplib.SMTP('smtp.wp.pl', 587)
+
+
+
 
     def replaceHtml(self):
         # Replace the target string
