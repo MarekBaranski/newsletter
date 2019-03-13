@@ -1,13 +1,15 @@
 from tkinter import *
-from tkinter import ttk, simpledialog
+from tkinter import ttk, simpledialog, filedialog
 from Main import BackendForApp
 import webbrowser
 import os
 
 
 class GuiForApp(BackendForApp):
-    def __init__(self, master, password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph):
-        super().__init__(password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph)
+    def __init__(self, master, password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph,
+                 filesToAttach):
+        super().__init__(password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph,
+                         filesToAttach)
         self.password = password
         self.send_to = send_to
         self.send_cc = send_cc
@@ -16,6 +18,7 @@ class GuiForApp(BackendForApp):
         self.subject = subject
         self.welcome = welcome
         self.textOfParagraph = textOfParagraph
+        self.filesToAttach = filesToAttach
 
         def addCc():
             def clearEntryCc():
@@ -55,7 +58,11 @@ class GuiForApp(BackendForApp):
             webbrowser.open_new_tab('ReadyMail.html')
 
         def getAttachs():
-            pass
+            newList = filedialog.askopenfilenames(parent=master, title='Choose a file')
+            self.filesToAttach = list(newList)
+            
+
+            return self.filesToAttach
 
         def restart_program():
             """Restarts the current program.
@@ -134,7 +141,7 @@ class GuiForApp(BackendForApp):
         self.sendButton = Button(self.top_frame, text='Send', width=10, command=send)
         self.ccButton = Button(self.top_frame, text='DW', command=addCc, width=10, state='normal')
         self.bccButton = Button(self.top_frame, text='UDW', command=addBcc, width=10)
-        self.attachButton = Button(self.top_frame, text='Załącz', command=restart_program, width=10)
+        self.attachButton = Button(self.top_frame, text='Załącz', width=10, command=getAttachs)
         self.lableEmpty = Label(self.top_frame, width=37)
         self.previewButton = Button(self.top_frame, text='podgląd', command=showPreview, width=10)
 
@@ -197,5 +204,5 @@ class GuiForApp(BackendForApp):
 
 window = Tk()
 my_gui = GuiForApp(window, password=None, send_to=[], send_cc=[], send_bcc=[], toaddrs=[], subject=None, welcome=None,
-                   textOfParagraph=None)
+                   textOfParagraph=None, filesToAttach=[])
 window.mainloop()

@@ -13,7 +13,7 @@ from tkinter import messagebox
 
 class BackendForApp:
 
-    def __init__(self, password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph):
+    def __init__(self, password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph, filesToAttach):
         # Create variable with time (version 'pl')
         locale.setlocale(locale.LC_TIME, 'pl')
         self.time = datetime.datetime.now().strftime("%d %B %Y")
@@ -28,7 +28,7 @@ class BackendForApp:
         self.send_cc = send_cc
         self.send_bcc = send_bcc
         self.subject = subject
-        self.filesToAttach = []
+        self.filesToAttach = filesToAttach
         self.toaddrs = toaddrs
         self.password = password
         self.server = smtplib.SMTP('smtp.wp.pl', 587)
