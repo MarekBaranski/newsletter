@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk, simpledialog, filedialog
+from tkinter import ttk, simpledialog, filedialog, scrolledtext
 from Main import BackendForApp
 import webbrowser
 import os
@@ -62,15 +62,18 @@ class GuiForApp(BackendForApp):
             self.filesToAttach = list(newList)
 
             newwin = Toplevel(master)
-            newwin.geometry('{}x{}'.format(300, 150))
-            display = Text(newwin)
+            newwin.geometry('628x200')
+            txt = scrolledtext.ScrolledText(newwin, width=60, height=10)
+
+            txt.grid(column=0, row=0)
+
             for item in self.filesToAttach:
                 os.path.split(item)
                 fileName = os.path.split(item)[1]
-                display.insert(END, fileName+'\n')
-            display.configure(state=DISABLED)
+                txt.insert(END, fileName+'\n')
+            txt.configure(state=DISABLED)
             newwin.title("Wybrane załączniki")
-            display.pack()
+
 
             return self.filesToAttach
 
