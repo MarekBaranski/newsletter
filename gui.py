@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk, simpledialog, filedialog, scrolledtext
 from Main import BackendForApp
+from functools import partial
 import webbrowser
 import os
 
@@ -58,22 +59,32 @@ class GuiForApp(BackendForApp):
             webbrowser.open_new_tab('ReadyMail.html')
 
         def getAttachs():
+            def closeWindow(newwin):
+                newwin.destroy()
+
+            def clearFilesToAttach():
+                del self.filesToAttach[:]
+                closeWindow(newwin)
+
             newList = filedialog.askopenfilenames(parent=master, title='Dodaj załączniki: ')
             self.filesToAttach = list(newList)
 
             newwin = Toplevel(master)
-            newwin.geometry('628x200')
+            newwin.geometry('628x250')
             txt = scrolledtext.ScrolledText(newwin, width=60, height=10)
-
-            txt.grid(column=0, row=0)
+            txt.grid(row=0, column=0, columnspan=2)
 
             for item in self.filesToAttach:
                 os.path.split(item)
                 fileName = os.path.split(item)[1]
-                txt.insert(END, fileName+'\n')
+                txt.insert(END, fileName + '\n')
             txt.configure(state=DISABLED)
             newwin.title("Wybrane załączniki")
+            buttonOkFiles = Button(newwin, text='OK', width=10, command=partial(closeWindow, newwin))
+            buttonOkFiles.grid(row=1, column=0, pady=4, padx=4, sticky='E')
 
+            buttonClearFiles = Button(newwin, text='anuluj', width=10, command=clearFilesToAttach)
+            buttonClearFiles.grid(row=1, column=1, pady=4, padx=4, sticky='W')
 
             return self.filesToAttach
 
@@ -167,7 +178,7 @@ class GuiForApp(BackendForApp):
         self.previewButton.grid(row=0, column=5)
 
         # create the center widgets
-        self.lableTo = Label(self.center, text='DO:', width=12)
+        self.lableTo = Button(self.center, text='DO:', width=10, relief=GROOVE)
         self.entryTo = Entry(self.center, width=65)
         self.clearToButton = Button(self.center, text='clear', width=10, command=clearEntryTo)
 
