@@ -33,9 +33,6 @@ class BackendForApp:
         self.password = password
         self.server = smtplib.SMTP('smtp.wp.pl', 587)
 
-
-
-
     def replaceHtml(self):
         # Replace the target string
         with open('TemplateOfMail.html', 'r', encoding='utf-8') as file:
@@ -90,12 +87,11 @@ class BackendForApp:
 
         messagebox.showinfo("Status wiadomości", "Wiadmość została wysłana :)")
 
-
-#testObjedt = BackendForApp()
-#testObjedt.send_mail()
+# testObjedt = BackendForApp()
+# testObjedt.send_mail()
 # starting the function
-#test_of_backend = BackendForApp()
-#test_of_backend.send_mail()
+# test_of_backend = BackendForApp()
+# test_of_backend.send_mail()
 
-#print('wiadomość została wysłana do:')
-#print(test_of_backend.checkAddressees())
+# print('wiadomość została wysłana do:')
+# print(test_of_backend.checkAddressees())

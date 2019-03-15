@@ -4,7 +4,6 @@ from Main import BackendForApp
 from functools import partial
 import webbrowser
 import os
-import re
 
 
 class GuiForApp(BackendForApp):
@@ -22,33 +21,44 @@ class GuiForApp(BackendForApp):
         self.textOfParagraph = textOfParagraph
         self.filesToAttach = filesToAttach
 
+        # the function create field to send Bcc
         def addCc():
+
+            # Function to clear EntryCc
             def clearEntryCc():
                 self.entryCc.delete(0, END)
 
+            # Create label, entry to CC and button to clear entry
             self.lableCc = Label(self.center, text='UW:', width=10)
             self.lableCc.grid(row=2, column=0, pady=10, sticky='ns')
             self.entryCc = Entry(self.center, width=65)
             self.entryCc.grid(row=2, column=1, pady=10, sticky='ns')
             self.clearCcButton = Button(self.center, text='clear', width=10, command=clearEntryCc)
             self.clearCcButton.grid(row=2, column=2, padx=5)
+            # we can only use this button once
             self.ccButton.config(state="disabled")
 
+        # the function create field to send Bcc
         def addBcc():
+            # Function to clear EntryBcc
             def clearEntryBcc():
                 self.entryBcc.delete(0, END)
 
+            # Create label, entry to BCC and button to clear entry
             self.lableBcc = Label(self.center, text='UDW:', width=10)
             self.lableBcc.grid(row=3, column=0, pady=10, sticky='ns')
             self.entryBcc = Entry(self.center, width=65)
             self.entryBcc.grid(row=3, column=1, pady=10, sticky='ns')
             self.clearBccButton = Button(self.center, text='clear', width=10, command=clearEntryBcc)
             self.clearBccButton.grid(row=3, column=2, padx=5)
+            # we can only use this button once
             self.bccButton.config(state="disabled")
 
+        # Function to clear EntryTo
         def clearEntryTo():
             self.entryTo.delete(0, END)
 
+        # the function shows how the mail will look like
         def showPreview():
             # get welcome
             self.welcome = self.entryWelcome.get()
@@ -56,10 +66,14 @@ class GuiForApp(BackendForApp):
             # get textOfParagraph
             self.textOfParagraph = self.entryTextParagraphOne.get('1.0', 'end')
 
+            # replace content
             self.replaceHtml()
             webbrowser.open_new_tab('ReadyMail.html')
 
+        # the function allows you to add multiple recipients
         def sendToMany():
+
+            # function to close currently window with save Address list
             def closeWindowAndSaveList(addressWindow, txt):
                 newList = []
                 strip_list = []
@@ -78,6 +92,7 @@ class GuiForApp(BackendForApp):
 
                 addressWindow.destroy()
 
+            # function to close currently window without Address list
             def closeWindowAndClearListSendTo():
                 del self.send_to[:]
                 self.entryTo.insert(END, valueFromEntry)
@@ -111,10 +126,13 @@ class GuiForApp(BackendForApp):
             buttonClearAddress = Button(addressWindow, text='anuluj', width=10, command=closeWindowAndClearListSendTo)
             buttonClearAddress.grid(row=1, column=1, pady=4, padx=4, sticky='W')
 
+        # the function allows you to add multiple attach
         def getAttachs():
+            # the function to close windows with save attachs
             def closeWindow(newwin):
                 newwin.destroy()
 
+            # the function to close windows without save attachs
             def clearFilesToAttach():
                 del self.filesToAttach[:]
                 closeWindow(newwin)
@@ -141,6 +159,7 @@ class GuiForApp(BackendForApp):
 
             return self.filesToAttach
 
+        # The function to restart program
         def restart_program():
             """Restarts the current program.
             Note: this function does not return. Any cleanup action (like
@@ -148,6 +167,7 @@ class GuiForApp(BackendForApp):
             python = sys.executable
             os.execl(python, python, *sys.argv)
 
+        # Main function to send e-mail
         def send():
             # get send_To
             newList = []
@@ -167,16 +187,16 @@ class GuiForApp(BackendForApp):
                 for item in newListForCc:
                     self.send_cc.extend(item.split(","))
 
-                # get send_Bcc
-                state = str(self.bccButton['state'])
-                if state == 'normal':
-                    self.send_bcc = []
-                else:
-                    newListForBcc = []
-                    newListForBcc.append(self.entryBcc.get())
+            # get send_Bcc
+            state = str(self.bccButton['state'])
+            if state == 'normal':
+                self.send_bcc = []
+            else:
+                newListForBcc = []
+                newListForBcc.append(self.entryBcc.get())
 
-                    for item in newListForBcc:
-                        self.send_bcc.extend(item.split(","))
+                for item in newListForBcc:
+                    self.send_bcc.extend(item.split(","))
 
             # get subject
             self.subject = self.entrySubject.get()
@@ -191,12 +211,12 @@ class GuiForApp(BackendForApp):
             self.password = simpledialog.askstring(self.send_from, "Hasło:", show='*')
 
             # send mail
-            # self.checkAddressees()
             self.toaddrs = self.send_to
             self.send_mail()
 
         # ------------------------------------
 
+        # create Main Window
         self.master = master
         master.title("Newsletter")
         master.geometry('{}x{}'.format(760, 600))
@@ -207,9 +227,10 @@ class GuiForApp(BackendForApp):
         self.btm_frame = Frame(master, width=450, height=10, pady=3)
 
         # layout all of the main containers
-        # window.grid_rowconfigure(0, weight=1)
-        # window.grid_columnconfigure(0, weight=1)
+        #window.grid_rowconfigure(0, weight=1)
+        #window.grid_columnconfigure(0, weight=1)
 
+        # split the main window on the part
         self.top_frame.grid(row=0, sticky='NW')
         self.center.grid(row=1)
         self.btm_frame.grid(row=2, sticky='SE')
@@ -233,6 +254,7 @@ class GuiForApp(BackendForApp):
         # create the center widgets
         self.lableTo = Button(self.center, text='DO:', width=10, command=sendToMany, relief=GROOVE)
         self.entryTo = Entry(self.center, width=65)
+        self.entryTo.focus_set()
         self.clearToButton = Button(self.center, text='clear', width=10, command=clearEntryTo)
 
         self.lableSubject = Label(self.center, text='Temat:', width=12)
