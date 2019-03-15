@@ -4,6 +4,7 @@ from Main import BackendForApp
 from functools import partial
 import webbrowser
 import os
+import re
 
 
 class GuiForApp(BackendForApp):
@@ -57,6 +58,58 @@ class GuiForApp(BackendForApp):
 
             self.replaceHtml()
             webbrowser.open_new_tab('ReadyMail.html')
+
+        def sendToMany():
+            def closeWindowAndSaveList(addressWindow, txt):
+                newList = []
+                strip_list = []
+                newList.append(txt.get("1.0", "end-1c"))
+
+                for item in newList:
+                    item = item.replace('\n', ',')
+                    item = item.replace(' ', ',')
+
+                    strip_list.extend(item.split(","))
+
+                self.send_to = list(map(str.strip, strip_list))
+                self.send_to = list(filter(None, self.send_to))
+
+                print(self.send_to)
+
+                addressWindow.destroy()
+
+            def closeWindowAndClearListSendTo():
+                del self.send_to[:]
+                self.entryTo.insert(END, valueFromEntry)
+                addressWindow.destroy()
+
+            addressWindow = Toplevel(master)
+            addressWindow.geometry('628x250')
+            addressWindow.title("Wyślij do wielu...")
+
+            sb_textbox = Scrollbar(addressWindow)  # create scrollbar
+            txt = Text(addressWindow, height=10, width=60, yscrollcommand=sb_textbox.set)
+            txt.focus_set()
+            valueFromEntry = self.entryTo.get()
+            listFromEntrySendTo = valueFromEntry.split(',')
+
+            for i in listFromEntrySendTo:
+                txt.insert(END, i + '\n')
+
+            clearEntryTo()
+
+            sb_textbox.config(command=txt.yview)  # bind yview method to scrollbar
+
+            txt.grid(row=0, column=0, columnspan=2)
+            sb_textbox.grid(row=0, column=2, padx=10, pady=10, sticky='W')  # place for scrollbar
+            sb_textbox.place(in_=txt, relx=1, rely=0, relheight=1)  # size and place scrollbar according with textbox
+
+            buttonOkAddress = Button(addressWindow, text='OK', width=10,
+                                     command=partial(closeWindowAndSaveList, addressWindow, txt))
+            buttonOkAddress.grid(row=1, column=0, pady=4, padx=4, sticky='E')
+
+            buttonClearAddress = Button(addressWindow, text='anuluj', width=10, command=closeWindowAndClearListSendTo)
+            buttonClearAddress.grid(row=1, column=1, pady=4, padx=4, sticky='W')
 
         def getAttachs():
             def closeWindow(newwin):
@@ -178,7 +231,7 @@ class GuiForApp(BackendForApp):
         self.previewButton.grid(row=0, column=5)
 
         # create the center widgets
-        self.lableTo = Button(self.center, text='DO:', width=10, relief=GROOVE)
+        self.lableTo = Button(self.center, text='DO:', width=10, command=sendToMany, relief=GROOVE)
         self.entryTo = Entry(self.center, width=65)
         self.clearToButton = Button(self.center, text='clear', width=10, command=clearEntryTo)
 
