@@ -70,7 +70,7 @@ class GuiForApp(BackendForApp):
             self.replaceHtml()
             webbrowser.open_new_tab('ReadyMail.html')
 
-        # the function allows you to add multiple recipients
+        # the function allows to add multiple recipients
         def sendToMany():
 
             # function to close currently window with save Address list
@@ -98,27 +98,43 @@ class GuiForApp(BackendForApp):
                 self.entryTo.insert(END, valueFromEntry)
                 addressWindow.destroy()
 
+            # create window needed to show adressList
             addressWindow = Toplevel(master)
             addressWindow.geometry('628x250')
             addressWindow.title("Wyślij do wielu...")
 
+            # create Text widget and scrollbar
             sb_textbox = Scrollbar(addressWindow)  # create scrollbar
             txt = Text(addressWindow, height=10, width=60, yscrollcommand=sb_textbox.set)
+
+            # add cursor to Textbox
             txt.focus_set()
+
+            # get value from entryTo to list
             valueFromEntry = self.entryTo.get()
             listFromEntrySendTo = valueFromEntry.split(',')
 
+            # put values to list
             for i in listFromEntrySendTo:
                 txt.insert(END, i + '\n')
 
+            # clear entryTo
             clearEntryTo()
 
-            sb_textbox.config(command=txt.yview)  # bind yview method to scrollbar
+            # bind yview method to scrollbar
+            sb_textbox.config(command=txt.yview)
 
+            # set place for Text widget
             txt.grid(row=0, column=0, columnspan=2)
-            sb_textbox.grid(row=0, column=2, padx=10, pady=10, sticky='W')  # place for scrollbar
-            sb_textbox.place(in_=txt, relx=1, rely=0, relheight=1)  # size and place scrollbar according with textbox
 
+            # place for scrollbar
+            sb_textbox.grid(row=0, column=2, padx=10, pady=10, sticky='W')
+
+            # size and place scrollbar according with textbox
+            sb_textbox.place(in_=txt, relx=1, rely=0, relheight=1)
+
+            # cerate button OK and CANCEL
+            # "partial" is need to use function with parameters
             buttonOkAddress = Button(addressWindow, text='OK', width=10,
                                      command=partial(closeWindowAndSaveList, addressWindow, txt))
             buttonOkAddress.grid(row=1, column=0, pady=4, padx=4, sticky='E')
@@ -267,7 +283,7 @@ class GuiForApp(BackendForApp):
 
         self.sb_textbox = Scrollbar(self.center)  # create scrollbar
         self.labelParagraphOne = Label(self.center, text='Tekst:', width=12)
-        self.entryTextParagraphOne = Text(self.center, height=5, width=52, yscrollcommand=self.sb_textbox.set)
+        self.entryTextParagraphOne = Text(self.center, height=5, width=52, yscrollcommand=self.sb_textbox.set, undo=True)
         self.sb_textbox.config(command=self.entryTextParagraphOne.yview)  # bind yview method to scrollbar
         self.entryTextParagraphOne.insert(END, 'W nawiązaniu do rozmowy telefonicznej,\n')
 
