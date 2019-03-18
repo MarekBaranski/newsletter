@@ -136,6 +136,9 @@ class GuiForApp(BackendForApp):
             self.send_to = list(filter(None, self.send_to))
 
             print(self.send_to)
+            clearEntryTo()
+            numberOfAddresses=str(len(self.send_to))
+            self.entryTo.insert(END, 'liczba odbiorców: '+numberOfAddresses )
 
             # close window
             self.addressWindow.destroy()
