@@ -8,7 +8,8 @@ import os
 
 class GuiForApp(BackendForApp):
     def __init__(self, master, password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph,
-                 filesToAttach):
+                 filesToAttach, addressWindow, txt, buttonOkAddress, buttonCancelAddress, stripListAdresses,
+                 tempListAddresses):
         super().__init__(password, send_to, send_cc, send_bcc, toaddrs, subject, welcome, textOfParagraph,
                          filesToAttach)
         self.password = password
@@ -20,6 +21,12 @@ class GuiForApp(BackendForApp):
         self.welcome = welcome
         self.textOfParagraph = textOfParagraph
         self.filesToAttach = filesToAttach
+        self.addressWindow = addressWindow
+        self.txt = txt
+        self.buttonOkAddress = buttonOkAddress
+        self.buttonCancelAddress = buttonCancelAddress
+        self.stripListAdresses = stripListAdresses
+        self.tempListAddresses = tempListAddresses
 
         # the function create field to send Bcc
         def addCc():
@@ -70,45 +77,90 @@ class GuiForApp(BackendForApp):
             self.replaceHtml()
             webbrowser.open_new_tab('ReadyMail.html')
 
+        def createAddressWindow():
+            # create window needed to show adressList
+            self.addressWindow = Toplevel(master)
+            self.addressWindow.geometry('628x250')
+            self.addressWindow.title("Wyślij do wielu...")
+
+            # create Text widget and scrollbar
+            sb_textbox = Scrollbar(self.addressWindow)  # create scrollbar
+            self.txt = Text(self.addressWindow, height=10, width=60, yscrollcommand=sb_textbox.set)
+
+            # add cursor to Textbox
+            self.txt.focus_set()
+
+            # bind yview method to scrollbar
+            sb_textbox.config(command=self.txt.yview)
+
+            # set place for Text widget
+            self.txt.grid(row=0, column=0, columnspan=2)
+
+            # place for scrollbar
+            sb_textbox.grid(row=0, column=2, padx=10, pady=10, sticky='W')
+
+            # size and place scrollbar according with textbox
+            sb_textbox.place(in_=self.txt, relx=1, rely=0, relheight=1)
+
+            # cerate button OK
+            self.buttonOkAddress = Button(self.addressWindow, text='OK', width=10)
+            self.buttonOkAddress.grid(row=1, column=0, pady=4, padx=4, sticky='E')
+            # cerate button CANCEL
+            self.buttonCancelAddress = Button(self.addressWindow, text='anuluj', width=10)
+            self.buttonCancelAddress.grid(row=1, column=1, pady=4, padx=4, sticky='W')
+
+            return self.addressWindow, self.txt
+
+        # function to close window with address
+        def closeAddressWindow():
+            self.addressWindow.destroy()
+
+        # function to close window with save address list
+        def saveAddressesList():
+            # temp list to get values from Text widget
+            self.tempListAddresses = []
+            self.tempListAddresses.append(self.txt.get("1.0", "end-1c"))
+
+            # temp list to split values from tempListAddresses
+            self.stripListAdresses = []
+
+            # loop to replace and of line and white space to coma
+            for item in self.tempListAddresses:
+                item = item.replace('\n', ',')
+                item = item.replace(' ', ',')
+
+                self.stripListAdresses.extend(item.split(","))
+
+            # change stripListAdresses to send_to
+            self.send_to = list(map(str.strip, self.stripListAdresses))
+            self.send_to = list(filter(None, self.send_to))
+
+            print(self.send_to)
+
+            # close window
+            self.addressWindow.destroy()
+
         # the function allows to add multiple recipients
         def sendToMany():
+            # create new window
+            createAddressWindow()
 
-            # function to close currently window with save Address list
-            def closeWindowAndSaveList(addressWindow, txt):
-                newList = []
-                strip_list = []
-                newList.append(txt.get("1.0", "end-1c"))
-
-                for item in newList:
-                    item = item.replace('\n', ',')
-                    item = item.replace(' ', ',')
-
-                    strip_list.extend(item.split(","))
-
-                self.send_to = list(map(str.strip, strip_list))
-                self.send_to = list(filter(None, self.send_to))
-
-                print(self.send_to)
-
-                addressWindow.destroy()
+            # function to close currently window with save Address list and change function under ButtonLableTo
+            def closeWindowAndSaveList():
+                saveAddressesList()
+                self.ButtonLableTo.configure(command=showAddressList)
 
             # function to close currently window without Address list
             def closeWindowAndClearListSendTo():
+                # delete content from send_to list
                 del self.send_to[:]
+                # restoring values entryTo
                 self.entryTo.insert(END, valueFromEntry)
-                addressWindow.destroy()
+                closeAddressWindow()
 
-            # create window needed to show adressList
-            addressWindow = Toplevel(master)
-            addressWindow.geometry('628x250')
-            addressWindow.title("Wyślij do wielu...")
-
-            # create Text widget and scrollbar
-            sb_textbox = Scrollbar(addressWindow)  # create scrollbar
-            txt = Text(addressWindow, height=10, width=60, yscrollcommand=sb_textbox.set)
-
-            # add cursor to Textbox
-            txt.focus_set()
+            # giving function to buttons
+            self.buttonOkAddress.configure(command=closeWindowAndSaveList)
+            self.buttonCancelAddress.configure(command=closeWindowAndClearListSendTo)
 
             # get value from entryTo to list
             valueFromEntry = self.entryTo.get()
@@ -116,33 +168,25 @@ class GuiForApp(BackendForApp):
 
             # put values to list
             for i in listFromEntrySendTo:
-                txt.insert(END, i + '\n')
+                self.txt.insert(END, i + '\n')
 
             # clear entryTo
             clearEntryTo()
 
-            # bind yview method to scrollbar
-            sb_textbox.config(command=txt.yview)
+        # the function to show and edit addressList
+        def showAddressList():
+            # create new window
+            createAddressWindow()
 
-            # set place for Text widget
-            txt.grid(row=0, column=0, columnspan=2)
+            # get all content from list send_to to Text widget
+            for i in self.send_to:
+                self.txt.insert(END, i + '\n')
 
-            # place for scrollbar
-            sb_textbox.grid(row=0, column=2, padx=10, pady=10, sticky='W')
+            # change functions under button OK and Cancel
+            self.buttonCancelAddress.configure(command=closeAddressWindow)
+            self.buttonOkAddress.configure(text='zmień', command=saveAddressesList)
 
-            # size and place scrollbar according with textbox
-            sb_textbox.place(in_=txt, relx=1, rely=0, relheight=1)
-
-            # cerate button OK and CANCEL
-            # "partial" is need to use function with parameters
-            buttonOkAddress = Button(addressWindow, text='OK', width=10,
-                                     command=partial(closeWindowAndSaveList, addressWindow, txt))
-            buttonOkAddress.grid(row=1, column=0, pady=4, padx=4, sticky='E')
-
-            buttonClearAddress = Button(addressWindow, text='anuluj', width=10, command=closeWindowAndClearListSendTo)
-            buttonClearAddress.grid(row=1, column=1, pady=4, padx=4, sticky='W')
-
-        # the function allows you to add multiple attach
+        # the function allows to add multiple attach
         def getAttachs():
             # the function to close windows with save attachs
             def closeWindow(newwin):
@@ -243,8 +287,8 @@ class GuiForApp(BackendForApp):
         self.btm_frame = Frame(master, width=450, height=10, pady=3)
 
         # layout all of the main containers
-        #window.grid_rowconfigure(0, weight=1)
-        #window.grid_columnconfigure(0, weight=1)
+        # window.grid_rowconfigure(0, weight=1)
+        # window.grid_columnconfigure(0, weight=1)
 
         # split the main window on the part
         self.top_frame.grid(row=0, sticky='NW')
@@ -255,7 +299,7 @@ class GuiForApp(BackendForApp):
         self.sendButton = Button(self.top_frame, text='Send', width=10, command=send)
         self.ccButton = Button(self.top_frame, text='DW', command=addCc, width=10, state='normal')
         self.bccButton = Button(self.top_frame, text='UDW', command=addBcc, width=10)
-        self.attachButton = Button(self.top_frame, text='Załącz', width=10, command=getAttachs)
+        self.attachButton = Button(self.top_frame, text='Załączniki', width=10, command=getAttachs)
         self.lableEmpty = Label(self.top_frame, width=37)
         self.previewButton = Button(self.top_frame, text='podgląd', command=showPreview, width=10)
 
@@ -268,7 +312,7 @@ class GuiForApp(BackendForApp):
         self.previewButton.grid(row=0, column=5)
 
         # create the center widgets
-        self.lableTo = Button(self.center, text='DO:', width=10, command=sendToMany, relief=GROOVE)
+        self.ButtonLableTo = Button(self.center, text='DO:', width=10, command=sendToMany, relief=GROOVE)
         self.entryTo = Entry(self.center, width=65)
         self.entryTo.focus_set()
         self.clearToButton = Button(self.center, text='clear', width=10, command=clearEntryTo)
@@ -283,7 +327,8 @@ class GuiForApp(BackendForApp):
 
         self.sb_textbox = Scrollbar(self.center)  # create scrollbar
         self.labelParagraphOne = Label(self.center, text='Tekst:', width=12)
-        self.entryTextParagraphOne = Text(self.center, height=5, width=52, yscrollcommand=self.sb_textbox.set, undo=True)
+        self.entryTextParagraphOne = Text(self.center, height=5, width=52, yscrollcommand=self.sb_textbox.set,
+                                          undo=True)
         self.sb_textbox.config(command=self.entryTextParagraphOne.yview)  # bind yview method to scrollbar
         self.entryTextParagraphOne.insert(END, 'W nawiązaniu do rozmowy telefonicznej,\n')
 
@@ -291,7 +336,7 @@ class GuiForApp(BackendForApp):
         self.separator = ttk.Separator(self.center, orient=HORIZONTAL)
 
         # layout the widgets in the center frame
-        self.lableTo.grid(row=1, column=0)
+        self.ButtonLableTo.grid(row=1, column=0)
         self.entryTo.grid(row=1, column=1)
         self.clearToButton.grid(row=1, column=2, padx=5)
 
@@ -319,5 +364,6 @@ class GuiForApp(BackendForApp):
 
 window = Tk()
 my_gui = GuiForApp(window, password=None, send_to=[], send_cc=[], send_bcc=[], toaddrs=[], subject=None, welcome=None,
-                   textOfParagraph=None, filesToAttach=[])
+                   textOfParagraph=None, filesToAttach=[], addressWindow=None, txt=None, buttonOkAddress=None,
+                   buttonCancelAddress=None, stripListAdresses=[], tempListAddresses=[])
 window.mainloop()
