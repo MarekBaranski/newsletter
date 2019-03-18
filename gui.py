@@ -137,11 +137,27 @@ class GuiForApp(BackendForApp):
 
             print(self.send_to)
             clearEntryTo()
+
+            # the function to clear list of send_to and entry send_to
+            def clearListAndEntrySentTo():
+                clearSendTo()
+                clearEntryTo()
+
+            # change function under clearToButton (clear entry and list)
+            self.clearToButton.configure(command=clearListAndEntrySentTo)
+
+            # count of send_to list
             numberOfAddresses=str(len(self.send_to))
-            self.entryTo.insert(END, 'liczba odbiorców: '+numberOfAddresses )
+
+            # put info with count of send_to list to entry
+            self.entryTo.insert(END, 'liczba odbiorców na liście: '+numberOfAddresses)
 
             # close window
             self.addressWindow.destroy()
+
+        # delete content from send_to list
+        def clearSendTo():
+            del self.send_to[:]
 
         # the function allows to add multiple recipients
         def sendToMany():
@@ -156,7 +172,8 @@ class GuiForApp(BackendForApp):
             # function to close currently window without Address list
             def closeWindowAndClearListSendTo():
                 # delete content from send_to list
-                del self.send_to[:]
+                clearSendTo()
+
                 # restoring values entryTo
                 self.entryTo.insert(END, valueFromEntry)
                 closeAddressWindow()
